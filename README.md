@@ -52,11 +52,7 @@ It utilizes various machine learning models, including **Logistic Regression**, 
 ## Setup Instructions
 
 1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/your-username/flipkart-product-review-analyzer.git
-   cd flipkart-product-review-analyzer
-   ```
-
+ 
 2. **Install Dependencies**:
    Install the required Python packages:
    ```bash
