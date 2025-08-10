@@ -1,6 +1,6 @@
 # SentimentLens: Product Review Analyzer
 
-This repository contains a **Flipkart Product Review Analyzer** that processes product reviews and classifies them into **Positive**, **Negative**, and **Neutral** sentiments using **state-of-the-art Transformer models**.  
+This repository contains **SentimentLens**, a **Product Review Analyzer** that processes product reviews and classifies them into **Positive**, **Negative**, and **Neutral** sentiments using **state-of-the-art Transformer models**.  
 It also extracts **key phrases** from reviews using **KeyBERT** and visualizes them with **WordClouds**, making the analysis richer and more insightful.
 
 The interactive app is built with **Streamlit** and allows users to upload a dataset, analyze sentiments, extract keywords, and download the results.
@@ -25,7 +25,7 @@ The interactive app is built with **Streamlit** and allows users to upload a dat
 
 ## Project Overview
 
-The **Flipkart Product Review Analyzer** processes review text (summary + detailed review) and performs two main tasks:
+**SentimentLens** processes review text (summary + detailed review) and performs two main tasks:
 
 ### Sentiment Classification
 - Uses **CardiffNLP Twitter-RoBERTa** model  
@@ -65,23 +65,34 @@ The app displays **sentiment-based WordClouds** for visual insight and allows CS
 
 ### 1. Clone the Repository
 
-git clone https://github.com/username/sentiment-analysis.git
-cd sentiment-analysis
+```bash
+git clone https://github.com/username/sentimentlens.git
+cd sentimentlens
+```
 
-### 2 Create a virtual environment
+### 2. Create a virtual environment
+
+```bash
 python -m venv .venv
 # macOS / Linux
 source .venv/bin/activate
-
-
 # Windows
 .venv\Scripts\activate
+```
 
 ### 3. Install Dependencies
-pip install -r requirements.txt
 
-### 4.  Run the Streamlit App
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run the Streamlit App
+
+```bash
 streamlit run app.py
+```
+
+---
 
 ## Usage
 
@@ -118,7 +129,3 @@ These metrics help you evaluate model performance on your labeled data.
 - **Sentiment Accuracy:** `84.3%` *(example — depends on dataset)*
 - **Top Keywords Example:** `"fast delivery, great quality, value for money"`
 - **WordClouds:** Separate visual clouds for Positive, Neutral, and Negative review text
-
-
-
-```bash
