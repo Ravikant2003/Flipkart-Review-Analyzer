@@ -1,4 +1,4 @@
-# Flipkart Product Review Analyzer — Transformer Powered 
+# SentimentLens: Product Review Analyzer
 
 This repository contains a **Flipkart Product Review Analyzer** that processes product reviews and classifies them into **Positive**, **Negative**, and **Neutral** sentiments using **state-of-the-art Transformer models**.  
 It also extracts **key phrases** from reviews using **KeyBERT** and visualizes them with **WordClouds**, making the analysis richer and more insightful.
