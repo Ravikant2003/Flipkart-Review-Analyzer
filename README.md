@@ -1,12 +1,14 @@
 # SentimentLens: Product Review Analyzer
 
+The Youtube Video For Demonstartion: https://youtu.be/l0JQiBZ2Hbc
+
 This repository contains **SentimentLens**, a **Product Review Analyzer** that processes product reviews and classifies them into **Positive**, **Negative**, and **Neutral** sentiments using **state-of-the-art Transformer models**.  
 It also extracts **key phrases** from reviews using **KeyBERT** and visualizes them with **WordClouds**, making the analysis richer and more insightful.
 
 The interactive app is built with **Streamlit** and allows users to upload a dataset, analyze sentiments, extract keywords, and download the results.
 
 **Dataset:** [Flipkart Product Customer Reviews Dataset](https://www.kaggle.com/datasets/niraliivaghani/flipkart-product-customer-reviews-dataset)
-**The Youtube Video For Demonstartion:** https://youtu.be/l0JQiBZ2Hbc
+
 ---
 
 ## Table of Contents
