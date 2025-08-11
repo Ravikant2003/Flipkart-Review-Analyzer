@@ -1,133 +1,105 @@
-# SentimentLens: Product Review Analyzer
+# SentimentLens: Product Review Analyzer (Fine Tuned Roberta)
 
-The Youtube Video For Demonstartion: https://youtu.be/l0JQiBZ2Hbc
+Working Project Video Url: https://youtu.be/BSC7Rf5NheA
 
-This repository contains **SentimentLens**, a **Product Review Analyzer** that processes product reviews and classifies them into **Positive**, **Negative**, and **Neutral** sentiments using **state-of-the-art Transformer models**.  
-It also extracts **key phrases** from reviews using **KeyBERT** and visualizes them with **WordClouds**, making the analysis richer and more insightful.
+## Overview
+This project implements a customer product review sentiment classification system using a fine-tuned RoBERTa transformer model. The system classifies reviews into three categories:
+- Negative
+- Neutral
+- Positive
 
-The interactive app is built with **Streamlit** and allows users to upload a dataset, analyze sentiments, extract keywords, and download the results.
+**Key Features**:
+- Data augmentation to balance class distribution and improve robustness
+- Weighted loss training to handle class imbalance
+- Fine-tuned RoBERTa-base model using Hugging Face Transformers
+- Streamlit web app for interactive sentiment analysis
+- Confidence scores and performance metrics visualization
 
-**Dataset:** [Flipkart Product Customer Reviews Dataset](https://www.kaggle.com/datasets/niraliivaghani/flipkart-product-customer-reviews-dataset)
+## Project Structure
 
----
+### Model Training & Augmentation
+1. Loads Flipkart reviews dataset (`flip2.csv`)
+2. Cleans and standardizes sentiment labels
+3. Combines summary and review text as input
+4. Uses advanced text augmentation techniques:
+   - Synonym replacement
+   - Random insertion/deletion/swapping
+5. Encodes labels and creates stratified train-test split
+6. Tokenizes text using RoBERTa tokenizer
+7. Trains model with custom weighted cross-entropy loss
+8. Implements early stopping based on neutral class F1-score
+9. Saves fine-tuned model to `./sentiment_model`
 
-## Table of Contents
-- [Project Overview](#project-overview)
-- [Features](#features)
-- [Technologies Used](#technologies-used)
-- [Setup Instructions](#setup-instructions)
-- [Usage](#usage)
-- [Evaluation Metrics](#evaluation-metrics)
-- [Example Output](#example-output)
-- [Notes & Troubleshooting](#notes--troubleshooting)
-- [Contributing](#contributing)
-- [License & Contact](#license--contact)
+### Streamlit Web App (`app.py`)
+- Loads saved model and tokenizer
+- User interface for text input and analysis
+- Displays:
+  - Predicted sentiment with emoji
+  - Confidence score
+  - Class confidence breakdown (bar chart)
+  - Static performance metrics
+  - Test set class distribution
 
----
+## Installation & Setup
 
-## Project Overview
+### Requirements
+- Python 3.7+
+- Packages: `transformers datasets torch scikit-learn nlpaug textattack pandas streamlit`
 
-**SentimentLens** processes review text (summary + detailed review) and performs two main tasks:
+### Installation
+pip install transformers datasets torch scikit-learn nlpaug textattack pandas streamlit
 
-### Sentiment Classification
-- Uses **CardiffNLP Twitter-RoBERTa** model  
-  (`cardiffnlp/twitter-roberta-base-sentiment-latest`) for high-accuracy sentiment analysis.
 
-### Keyword Extraction
-- Uses **KeyBERT** to extract the top keywords per review for better interpretability.
 
-The app displays **sentiment-based WordClouds** for visual insight and allows CSV download of results.
+###Additional Setup
+Download NLTK data:
 
----
+import nltk
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
 
-## Features
-- **Upload CSV** with `Summary`, `Review`, and optionally `sentiment` columns.
-- **Automatic Text Combination** (summary + review).
-- **Sentiment Prediction** (Positive, Neutral, Negative) using a Transformer.
-- **Keyword Extraction** (top keywords per review).
-- **Model Performance Report** (Accuracy, Precision, Recall, F1-score) if `sentiment` labels are provided.
-- **Sentiment-wise WordClouds** for visualization.
-- **Download Results as CSV**.
 
----
+###Usage
+1. Train the Model
+Place dataset CSV (flip2.csv) in project root with columns:
+ProductName, Price, Rating, Summary, Review, sentiment
 
-## Technologies Used
-- **Python 3.x**
-- **Pandas** — Data processing
-- **Transformers (Hugging Face)** — RoBERTa sentiment model
-- **KeyBERT** — Keyword extraction
-- **WordCloud** — Visualization
-- **Matplotlib** — Plot rendering
-- **scikit-learn** — Accuracy & classification reports
-- **Streamlit** — Web app interface
 
----
+2. Run Streamlit App
+After training and downloading your model , Please keep the app.py and the model in same directory .
 
-## Setup Instructions
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/username/sentimentlens.git
-cd sentimentlens
-```
-
-### 2. Create a virtual environment
-
-```bash
-python -m venv .venv
-# macOS / Linux
-source .venv/bin/activate
-# Windows
-.venv\Scripts\activate
-```
-
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Run the Streamlit App
-
-```bash
 streamlit run app.py
-```
 
----
+###Model Performance
+Evaluation on test set (918 samples):
 
-## Usage
+Sentiment	Precision	Recall	F1-score	Support
+Negative	 0.92	      0.91	  0.91	    200
+Neutral	    0.95	    0.97	  0.96	    200
+Positive	  0.97	    0.97	  0.97	    518
+Accuracy			                0.95	    918
 
-1. **Prepare CSV**: Ensure your CSV has at least:
-   - `Summary` — short title
-   - `Review` — full review text
-   - `sentiment` *(optional)* — used for evaluation if present; values such as `positive`, `neutral`, `negative`
+###Code Highlights
+Advanced text augmentation for minority classes
 
-2. **Upload CSV** via the Streamlit interface.
+Custom weighted loss function
 
-3. **Inspect Output**:
-   - Predicted sentiment for each review
-   - Keywords for each review
-   - Sentiment-wise word clouds
-   - If `sentiment` exists in CSV, you will see accuracy and a classification report
+Hugging Face Trainer with early stopping
 
-4. **Download** the enriched CSV with predictions and keywords using the download button.
+Interactive Streamlit visualization
 
----
+Confidence breakdown charts
 
-## Evaluation Metrics
+###Folder Structure
 
-If the uploaded dataset includes a `sentiment` column, the app computes:
+project-root/
+├── sentiment_model/         # Saved fine-tuned model and tokenizer files
+├── app.py                   # Streamlit app script (deployment)
+├── train_sentiment_model.py # Training + augmentation script
+├── flip2.csv                # Raw dataset CSV (example)
+├── requirements.txt         # Optional: list of dependencies
+└── README.md                # This file
 
-- **Accuracy** — overall fraction of correct predictions
-- **Classification Report** — Precision, Recall, F1-score per class
 
-These metrics help you evaluate model performance on your labeled data.
 
----
-
-## Example Output
-
-- **Sentiment Accuracy:** `84.3%` *(example — depends on dataset)*
-- **Top Keywords Example:** `"fast delivery, great quality, value for money"`
-- **WordClouds:** Separate visual clouds for Positive, Neutral, and Negative review text
+```bash
