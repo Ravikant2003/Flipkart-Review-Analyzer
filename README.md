@@ -92,28 +92,6 @@ Evaluation on test set (918 samples):
 
 
 
-## Key Improvements
 
-### Model Performance Table
-* Formatted using proper **Markdown table syntax** for clean rendering.
-* Added alignment headers (`:---:`) to ensure columns are correctly centered.
-* **Bolded** key metrics like **Accuracy** for emphasis and quick scanning.
-* Fixed inconsistent spacing from the original data to improve readability.
-
----
-
-### Code Highlights
-* Converted the section into a clear, bulleted list.
-* **Data Augmentation & Weighted Loss:** Added bold headers for key techniques.
-* **Expanded Descriptions:** Kept descriptions concise while providing more context on each point.
-* **Logical Ordering:** Arranged points to follow the project flow, from data processing to deployment.
-
----
-
-### Folder Structure
-* Maintained the structure within a **code block** for better visual representation.
-* **Added Comments:** Included brief, inline comments (`#`) to explain the purpose of each file and directory.
-* **Clarified Dataset:** Added a comment specifying example columns within the dataset file.
-* **Fixed Formatting:** Corrected the directory tree formatting for a cleaner look.
 
 ```bash
