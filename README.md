@@ -70,36 +70,64 @@ After training and downloading your model , Please keep the app.py and the model
 
 streamlit run app.py
 
-###Model Performance
+## Model Performance
 Evaluation on test set (918 samples):
 
-Sentiment	Precision	Recall	F1-score	Support
-Negative	 0.92	      0.91	  0.91	    200
-Neutral	    0.95	    0.97	  0.96	    200
-Positive	  0.97	    0.97	  0.97	    518
-Accuracy			                0.95	    918
+| Sentiment | Precision | Recall | F1-score | Support |
+|-----------|-----------|--------|----------|---------|
+| Negative  | 0.92      | 0.91   | 0.91     | 200     |
+| Neutral   | 0.95      | 0.97   | 0.96     | 200     |
+| Positive  | 0.97      | 0.97   | 0.97     | 518     |
+| **Accuracy** | | | **0.95** | **918** |
 
-###Code Highlights
-Advanced text augmentation for minority classes
+## Code Highlights
+- **Advanced text augmentation**: Synonym replacement and random perturbations for minority classes
+- **Custom weighted loss function**: Addresses class imbalance during training
+- **Hugging Face Trainer**: With early stopping based on F1-score
+- **Interactive Streamlit visualization**: Real-time sentiment analysis with confidence scores
+- **Confidence breakdown charts**: Visual class probability distribution
 
-Custom weighted loss function
-
-Hugging Face Trainer with early stopping
-
-Interactive Streamlit visualization
-
-Confidence breakdown charts
-
-###Folder Structure
+## Folder Structure
 
 project-root/
-├── sentiment_model/         # Saved fine-tuned model and tokenizer files
-├── app.py                   # Streamlit app script (deployment)
+├── sentiment_model/ # Fine-tuned model & tokenizer
+├── app.py # Streamlit application
 ├── train_sentiment_model.py # Training + augmentation script
-├── flip2.csv                # Raw dataset CSV (example)
-├── requirements.txt         # Optional: list of dependencies
-└── README.md                # This file
+├── flip2.csv # Example dataset (ProductName, Price, Rating, etc.)
+├── requirements.txt # Dependencies (optional)
+└── README.md # Documentation
 
+###Key improvements:
+
+Model Performance Table:
+
+Proper Markdown table formatting
+
+Added alignment headers
+
+Bolded accuracy metrics for emphasis
+
+Fixed inconsistent spacing in original data
+
+###Code Highlights:
+
+Converted to bullet points with clear explanations
+
+Added bold headers for key techniques
+
+Expanded descriptions while keeping concise
+
+Logical ordering from data processing to deployment
+
+###Folder Structure:
+
+Maintained as code block for better readability
+
+Added brief comments explaining each file's purpose
+
+Fixed directory tree formatting
+
+Clarified dataset columns in comment
 
 
 ```bash
