@@ -87,47 +87,42 @@ Evaluation on test set (918 samples):
 - **Interactive Streamlit visualization**: Real-time sentiment analysis with confidence scores
 - **Confidence breakdown charts**: Visual class probability distribution
 
-## Folder Structure
+
+
+
+
+***
 
 project-root/
-├── sentiment_model/ # Fine-tuned model & tokenizer
-├── app.py # Streamlit application
+├── sentiment_model/         # Fine-tuned model & tokenizer
+├── app.py                   # Streamlit application
 ├── train_sentiment_model.py # Training + augmentation script
-├── flip2.csv # Example dataset (ProductName, Price, Rating, etc.)
-├── requirements.txt # Dependencies (optional)
-└── README.md # Documentation
+├── flip2.csv                # Example dataset (ProductName, Price, Rating, etc.)
+├── requirements.txt         # Dependencies (optional)
+└── README.md                # Documentation
 
-###Key improvements:
+## Key Improvements
 
-Model Performance Table:
+### Model Performance Table
+* Formatted using proper **Markdown table syntax** for clean rendering.
+* Added alignment headers (`:---:`) to ensure columns are correctly centered.
+* **Bolded** key metrics like **Accuracy** for emphasis and quick scanning.
+* Fixed inconsistent spacing from the original data to improve readability.
 
-Proper Markdown table formatting
+---
 
-Added alignment headers
+### Code Highlights
+* Converted the section into a clear, bulleted list.
+* **Data Augmentation & Weighted Loss:** Added bold headers for key techniques.
+* **Expanded Descriptions:** Kept descriptions concise while providing more context on each point.
+* **Logical Ordering:** Arranged points to follow the project flow, from data processing to deployment.
 
-Bolded accuracy metrics for emphasis
+---
 
-Fixed inconsistent spacing in original data
-
-###Code Highlights:
-
-Converted to bullet points with clear explanations
-
-Added bold headers for key techniques
-
-Expanded descriptions while keeping concise
-
-Logical ordering from data processing to deployment
-
-###Folder Structure:
-
-Maintained as code block for better readability
-
-Added brief comments explaining each file's purpose
-
-Fixed directory tree formatting
-
-Clarified dataset columns in comment
-
+### Folder Structure
+* Maintained the structure within a **code block** for better visual representation.
+* **Added Comments:** Included brief, inline comments (`#`) to explain the purpose of each file and directory.
+* **Clarified Dataset:** Added a comment specifying example columns within the dataset file.
+* **Fixed Formatting:** Corrected the directory tree formatting for a cleaner look.
 
 ```bash
