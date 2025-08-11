@@ -1,100 +1,137 @@
 import streamlit as st
+import torch
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, pipeline
 import pandas as pd
-from transformers import pipeline
-from keybert import KeyBERT
-from wordcloud import WordCloud
-import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score, classification_report
 
+# Define your label mapping (must match what you used during training)
+LABEL_MAP = {
+    "LABEL_0": "negative",
+    "LABEL_1": "neutral",
+    "LABEL_2": "positive"
+}
 
-# 1. Load Sentiment Model (cached)
-
+# Load model and tokenizer with label mapping
 @st.cache_resource
-def load_sentiment_model():
-    return pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest")
-
-sentiment_pipeline = load_sentiment_model()
-
-
-# 2. Load KeyBERT Model (cached)
-
 @st.cache_resource
-def load_keybert():
-    return KeyBERT()
+def load_model():
+    model = AutoModelForSequenceClassification.from_pretrained("./sentiment_model")
+    tokenizer = AutoTokenizer.from_pretrained("./sentiment_model")
 
-kw_model = load_keybert()
+    # Set label mapping inside model config
+    model.config.id2label = {0: "negative", 1: "neutral", 2: "positive"}
+    model.config.label2id = {"negative": 0, "neutral": 1, "positive": 2}
 
+    # Create pipeline (no id2label argument here)
+    return pipeline(
+        "text-classification", 
+        model=model, 
+        tokenizer=tokenizer,
+        function_to_apply="softmax",  # Ensures probabilities sum to 1
+        top_k=None  # Return all results
+    )
 
-# 3. Sentiment Prediction Function
+# Function to format sentiment prediction
+def format_prediction(prediction):
+    # Get the top prediction
+    top_pred = prediction[0]
+    sentiment = top_pred['label']
+    score = top_pred['score']
+    
+    emoji = "😠" if sentiment == "negative" else "😐" if sentiment == "neutral" else "😊"
+    return f"{emoji} {sentiment.capitalize()} ({score:.2%} confidence)"
 
-def predict_batch(texts):
-    return [res['label'] for res in sentiment_pipeline(texts, truncation=True)]
+# Static performance data
+performance_data = {
+    "Classification Report": {
+        "negative": {"precision": 0.92, "recall": 0.91, "f1-score": 0.91, "support": 200},
+        "neutral": {"precision": 0.95, "recall": 0.97, "f1-score": 0.96, "support": 200},
+        "positive": {"precision": 0.97, "recall": 0.97, "f1-score": 0.97, "support": 518},
+        "accuracy": 0.95,
+        "macro_avg": {"precision": 0.95, "recall": 0.95, "f1-score": 0.95, "support": 918},
+        "weighted_avg": {"precision": 0.95, "recall": 0.95, "f1-score": 0.95, "support": 918}
+    },
+    "Class Distribution": {
+        "positive": 518,
+        "neutral": 200,
+        "negative": 200
+    }
+}
 
-# 4. WordCloud Plotter
+# Streamlit UI
+st.set_page_config(page_title="Sentiment Analyzer", page_icon="😊", layout="wide")
 
+# Sidebar for input
+st.sidebar.header("Sentiment Analysis Demo")
+user_input = st.sidebar.text_area("Enter your text here:", "The product was amazing! Loved the quality and fast delivery.")
+analyze_button = st.sidebar.button("Analyze Sentiment")
 
-def plot_wordcloud(text, title):
-    wc = WordCloud(width=800, height=400, background_color="white").generate(text)
-    plt.figure(figsize=(8, 4))
-    plt.imshow(wc, interpolation="bilinear")
-    plt.axis("off")
-    plt.title(title)
-    st.pyplot(plt)
+# Load model (only once)
+classifier = load_model()
 
+# Main content
+st.title("📝 Customer Sentiment Analysis")
+st.markdown("This tool analyzes product review sentiment using a fine-tuned RoBERTa model.")
 
-# 5. Streamlit UI
+# Create columns layout
+col1, col2 = st.columns([1, 1])
 
-
-
-
-st.title("Product Review Sentiment & Keyword Analysis")
-st.write("Upload your CSV file to analyze sentiment and extract keywords.")
-
-uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
-
-if uploaded_file:
-    df = pd.read_csv(uploaded_file)
-
-    # Check required columns
-    if "Review" not in df.columns or "Summary" not in df.columns:
-        st.error("CSV must have 'Review' and 'Summary' columns.")
-    elif "sentiment" not in df.columns:
-        st.error("CSV must have 'sentiment' column for evaluation.")
+# Results column
+with col1:
+    st.header("Analysis Result")
+    
+    if analyze_button and user_input:
+        with st.spinner("Analyzing sentiment..."):
+            result = classifier(user_input)[0]
+            formatted = format_prediction(result)
+            
+            # Display with appropriate color
+            if "negative" in formatted:
+                st.error(formatted)
+            elif "neutral" in formatted:
+                st.warning(formatted)
+            else:
+                st.success(formatted)
+                
+            st.subheader("Review Text:")
+            st.write(user_input)
+            
+            # Show confidence scores for all classes
+            st.subheader("Confidence Breakdown:")
+            conf_df = pd.DataFrame({
+                "Sentiment": [LABEL_MAP.get(p['label'], p['label']) for p in result],
+                "Confidence": [p['score'] for p in result]
+            })
+            st.bar_chart(conf_df.set_index("Sentiment"))
     else:
-        # Combine text columns
-        df["combined_text"] = df["Summary"].astype(str) + " " + df["Review"].astype(str)
+        st.info(" Enter text and click 'Analyze Sentiment' to get started")
 
-        # Run Sentiment Prediction
-        with st.spinner("Analyzing sentiments..."):
-            df["predicted_sentiment"] = predict_batch(df["combined_text"].tolist())
+# Performance metrics column
+with col2:
+    st.header("Model Performance")
+    st.caption("Based on test dataset of 918 samples")
+    
+    # Classification report table
+    st.subheader("Detailed Classification Report")
+    report_df = pd.DataFrame(performance_data["Classification Report"]).T
+    st.dataframe(report_df.style.format("{:.2f}"), height=350)
+    
+    # Class distribution chart
+    st.subheader("Class Distribution in Test Set")
+    dist_df = pd.DataFrame(
+        list(performance_data["Class Distribution"].items()),
+        columns=["Sentiment", "Count"]
+    )
+    st.bar_chart(dist_df.set_index("Sentiment"))
 
-        # Calculate and display accuracy & classification report
-        accuracy = accuracy_score(df['sentiment'], df['predicted_sentiment'])
-        st.write(f"### Model Accuracy: {accuracy:.2%}")
-        report = classification_report(df['sentiment'], df['predicted_sentiment'])
-        st.text("Classification Report:\n" + report)
+# Footer
+st.markdown("---")
+st.caption("Model: RoBERTa-base fine-tuned on product reviews | "
+           "Supports Negative/Neutral/Positive sentiment detection")
 
-        # Keyword Extraction
-        with st.spinner("Extracting keywords..."):
-            df["keywords"] = df["combined_text"].apply(
-                lambda x: ", ".join([kw[0] for kw in kw_model.extract_keywords(x, top_n=3)])
-            )
-
-        # Display Results
-        st.subheader("Preview of Analysis")
-        st.dataframe(df[["Summary", "Review", "predicted_sentiment", "keywords"]].head())
-
-        # WordClouds by Sentiment
-        st.subheader("☁ Word Clouds by Sentiment")
-        for sentiment in df["predicted_sentiment"].unique():
-            sentiment_text = " ".join(df[df["predicted_sentiment"] == sentiment]["combined_text"])
-            plot_wordcloud(sentiment_text, f"{sentiment} Reviews")
-
-        # Download Option
-        csv_download = df.to_csv(index=False).encode("utf-8")
-        st.download_button(
-            label=" Download Results as CSV",
-            data=csv_download,
-            file_name="sentiment_keywords_results.csv",
-            mime="text/csv"
-        )
+# How to run instructions
+st.sidebar.markdown("""
+**How to Run Locally:**
+1. Save model in `./sentiment_model`
+2. Install requirements: `pip install streamlit transformers torch pandas`
+3. Run: `streamlit run app.py`
+""")
