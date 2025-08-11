@@ -91,15 +91,6 @@ Evaluation on test set (918 samples):
 
 
 
-***
-
-project-root/
-├── sentiment_model/         # Fine-tuned model & tokenizer
-├── app.py                   # Streamlit application
-├── train_sentiment_model.py # Training + augmentation script
-├── flip2.csv                # Example dataset (ProductName, Price, Rating, etc.)
-├── requirements.txt         # Dependencies (optional)
-└── README.md                # Documentation
 
 ## Key Improvements
 
